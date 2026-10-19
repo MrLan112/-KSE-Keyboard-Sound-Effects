@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "kse",
+  "version": "${version}",
+  "name": "[KSE] Keyboard Sound Effects",
+  "description": "Adds customizable keyboard and mouse click sound effects (including ASMR-style sounds). Import your own sounds, preview them and tune the volume right in the in-game settings menu.",
+  "authors": [
+    "Mr_Lan123"
+  ],
+  "contact": {
+    "sources": "https://github.com/MrLan112/-KSE-Keyboard-Sound-Effects",
+    "homepage": "https://modrinth.com/mod/kse-keyboard-sound-effects",
+    "issues": "https://github.com/MrLan112/-KSE-Keyboard-Sound-Effects/issues",
+    "Discord": "https://discord.gg/7qzAw5Cckx"
+  },
+  "license": "MIT",
+  "icon": "assets/kse/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.mrlan123.kse.KSEModClient"
+    ],
+    "modmenu": [
+      "com.mrlan123.kse.KSEModMenu"
+    ]
+  },
+  "mixins": [
+    "kse.client.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

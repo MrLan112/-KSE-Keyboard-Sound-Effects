@@ -1,0 +1,78 @@
+plugins {
+	id 'fabric-loom' version '1.17-SNAPSHOT'
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	// Needed for the extra Java Sound SPI providers (mp3spi / vorbis) used for
+	// custom sound import. Loom already adds the Minecraft/Fabric maven
+	// repositories automatically.
+	mavenCentral()
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"kse" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Extra Java Sound SPI providers, bundled into the mod jar (jar-in-jar) so that
+	// custom sounds imported by the user can use MP3 and OGG Vorbis in addition to
+	// the natively supported WAV / AIFF / AU formats.
+	include implementation("com.googlecode.soundlibs:mp3spi:1.9.5.4")
+	include implementation("com.googlecode.soundlibs:tritonus-share:0.3.7.4")
+	include implementation("com.googlecode.soundlibs:jlayer:1.0.1.4")
+	include implementation("org.gagravarr:vorbis-java-core:0.8")
+	include implementation("org.gagravarr:vorbis-java-tika:0.8")
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}" }
+	}
+}
+
+// The Mod Menu API classes in this project are compile-time stubs only; the real
+// ones come from Mod Menu at run time, so they must not end up in the mod jar.
+tasks.withType(Jar).configureEach {
+	exclude 'com/terraformersmc/**'
+}

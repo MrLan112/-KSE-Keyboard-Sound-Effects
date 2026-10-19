@@ -1,0 +1,65 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version '1.18.2'
+	id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	// Extra Java Sound SPI providers (mp3spi / vorbis) for custom sound import.
+	mavenCentral()
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"kse" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	// Minecraft 26.x is unobfuscated: no mappings, no mod* configurations, no remapJar.
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Audio SPI libraries bundled into the mod jar (jar-in-jar).
+	include implementation("com.googlecode.soundlibs:mp3spi:1.9.5.4")
+	include implementation("com.googlecode.soundlibs:tritonus-share:0.3.7.4")
+	include implementation("com.googlecode.soundlibs:jlayer:1.0.1.4")
+	include implementation("org.gagravarr:vorbis-java-core:0.8")
+	include implementation("org.gagravarr:vorbis-java-tika:0.8")
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+// The Mod Menu API classes in this project are compile-time stubs only; the real
+// ones come from Mod Menu at run time, so they must not end up in the mod jar.
+tasks.withType(Jar).configureEach {
+	exclude 'com/terraformersmc/**'
+}

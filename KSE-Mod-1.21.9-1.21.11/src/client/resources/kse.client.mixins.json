@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.mrlan123.kse.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "KeyboardMixin",
+    "MouseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
