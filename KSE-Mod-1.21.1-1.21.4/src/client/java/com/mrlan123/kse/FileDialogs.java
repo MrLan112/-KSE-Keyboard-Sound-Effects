@@ -1,5 +1,6 @@
 package com.mrlan123.kse;
 
+import com.mrlan123.kse.audio.SoundFormats;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import javax.swing.JFileChooser;
@@ -32,9 +33,12 @@ public final class FileDialogs {
     private FileDialogs() { }
 
     public static Result pickAudioFile() {
+        if (Platform.isAndroid()) {
+            return Result.UNAVAILABLE; // no system dialog on Android: the typed-path screen is used
+        }
         // Minecraft's bundled tinyfd gives the nicest native dialog where it is available.
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            String[] patterns = {"*.wav", "*.mp3", "*.ogg", "*.oga", "*.aiff", "*.aif", "*.au"};
+            String[] patterns = SoundFormats.globPatterns().toArray(new String[0]);
             PointerBuffer filters = stack.mallocPointer(patterns.length);
             for (String p : patterns) {
                 filters.put(stack.UTF8(p));
@@ -45,7 +49,7 @@ public final class FileDialogs {
             Object res = tfd.getMethod("tinyfd_openFileDialog",
                             CharSequence.class, CharSequence.class, PointerBuffer.class, CharSequence.class, boolean.class)
                     .invoke(null, "Select a sound file", null, filters,
-                            "Audio files (wav, mp3, ogg, aiff, au)", false);
+                            "Audio files", false);
             String path = res == null ? null : res.toString();
             return (path == null || path.isBlank()) ? Result.CANCELLED : Result.ok(path);
         } catch (Throwable t) {
@@ -75,7 +79,7 @@ public final class FileDialogs {
                 + "Add-Type -AssemblyName System.Windows.Forms;"
                 + "$f=New-Object System.Windows.Forms.OpenFileDialog;"
                 + "$f.Title='Select a sound file';"
-                + "$f.Filter='Audio files|*.wav;*.mp3;*.ogg;*.oga;*.aiff;*.aif;*.au|All files|*.*';"
+                + "$f.Filter='Audio files|" + String.join(";", SoundFormats.globPatterns()) + "|All files|*.*';"
                 + "if($f.ShowDialog() -eq 'OK'){Write-Output $f.FileName}";
         return fromOutput(run(List.of("powershell", "-NoProfile", "-STA", "-Command", script)));
     }
@@ -92,13 +96,14 @@ public final class FileDialogs {
     private static Result linux() throws Exception {
         try {
             return fromOutput(run(List.of("zenity", "--file-selection", "--title=Select a sound file",
-                    "--file-filter=Audio files | *.wav *.mp3 *.ogg *.oga *.aiff *.aif *.au")));
+                    "--file-filter=Audio files | " + String.join(" ", SoundFormats.globPatterns()),
+                    "--file-filter=All files | *")));
         } catch (IOException notInstalled) {
             // fall through to kdialog
         }
         try {
             return fromOutput(run(List.of("kdialog", "--getopenfilename", System.getProperty("user.home", "."),
-                    "*.wav *.mp3 *.ogg *.oga *.aiff *.aif *.au|Audio files")));
+                    String.join(" ", SoundFormats.globPatterns()) + "|Audio files")));
         } catch (IOException notInstalled) {
             return Result.UNAVAILABLE;
         }
@@ -112,8 +117,8 @@ public final class FileDialogs {
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Select a sound file");
             chooser.setFileFilter(new FileNameExtensionFilter(
-                    "Audio files (*.wav, *.mp3, *.ogg, *.aiff, *.aif, *.au)",
-                    "wav", "mp3", "ogg", "oga", "aiff", "aif", "au"));
+                    "Audio files", SoundFormats.all().toArray(new String[0])));
+            chooser.setAcceptAllFileFilterUsed(true);
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION
                     && chooser.getSelectedFile() != null) {
                 return new Result(Status.OK, chooser.getSelectedFile().toPath());

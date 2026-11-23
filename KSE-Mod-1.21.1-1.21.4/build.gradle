@@ -11,8 +11,7 @@ base {
 }
 
 repositories {
-	// Needed for the extra Java Sound SPI providers (mp3spi / vorbis) used for
-	// custom sound import. Loom already adds the Minecraft/Fabric maven
+	// Needed for the audio decoder libraries used for custom sound import. Loom already adds the Minecraft/Fabric maven
 	// repositories automatically.
 	mavenCentral()
 }
@@ -37,14 +36,28 @@ dependencies {
 	// Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Extra Java Sound SPI providers, bundled into the mod jar (jar-in-jar) so that
-	// custom sounds imported by the user can use MP3 and OGG Vorbis in addition to
-	// the natively supported WAV / AIFF / AU formats.
+	// Audio decoders, bundled into the mod jar (jar-in-jar). SoundDecoder creates
+	// them by name, so each library only adds its own format. "include" does not
+	// pull in transitive dependencies, so everything is listed.
+	// MP3 / MP2 / MP1
 	include implementation("com.googlecode.soundlibs:mp3spi:1.9.5.4")
-	include implementation("com.googlecode.soundlibs:tritonus-share:0.3.7.4")
 	include implementation("com.googlecode.soundlibs:jlayer:1.0.1.4")
+	include implementation("com.googlecode.soundlibs:tritonus-share:0.3.7.4")
+	// OGG Vorbis
+	include implementation("com.googlecode.soundlibs:vorbisspi:1.0.3.3")
+	include implementation("com.googlecode.soundlibs:jorbis:0.0.17.4")
+	// Opus (Ogg container + decoder) and Speex
 	include implementation("org.gagravarr:vorbis-java-core:0.8")
-	include implementation("org.gagravarr:vorbis-java-tika:0.8")
+	include implementation("io.github.jaredmdobson:concentus:1.0.2")
+	include implementation("com.tianscar.javasound:javasound-speex:0.9.8")
+	// FLAC, AAC / M4A, Apple Lossless, Monkey's Audio, WavPack, Shorten
+	include implementation("com.tianscar.javasound:javasound-flac:1.4.1")
+	include implementation("com.tianscar.javasound:javasound-aac:0.9.8")
+	include implementation("com.tianscar.javasound:javasound-alac:0.2.3")
+	include implementation("com.tianscar.javasound:javasound-ape:1.7.7")
+	include implementation("com.tianscar.javasound:javasound-wavpack:1.4.2")
+	include implementation("com.tianscar.javasound:javasound-shorten:3.6.2")
+	include implementation("com.tianscar.javasound:javasound-resloader:0.1.3")
 }
 
 processResources {

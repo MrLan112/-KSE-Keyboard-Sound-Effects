@@ -20,6 +20,25 @@ public class KSEConfig {
     private static final Path CONFIG_DIR = FabricLoader.getInstance().getConfigDir().resolve("kse");
     private static final Path CONFIG_FILE = CONFIG_DIR.resolve("config.json");
     public static final Path SOUNDS_DIR = CONFIG_DIR.resolve("sounds");
+    /** Drop sound files here; they can then be added by typing just the file name (handy on Android). */
+    public static final Path IMPORT_DIR = CONFIG_DIR.resolve("import");
+
+    /** Finds a file typed by the player: as given, or inside the import folder. */
+    public static Path resolveImportFile(String raw) {
+        try {
+            Path direct = Path.of(raw);
+            if (Files.isRegularFile(direct)) {
+                return direct;
+            }
+            Path inImport = IMPORT_DIR.resolve(raw).normalize();
+            if (inImport.startsWith(IMPORT_DIR) && Files.isRegularFile(inImport)) {
+                return inImport;
+            }
+        } catch (RuntimeException ignored) {
+            // invalid path text
+        }
+        return null;
+    }
 
     public boolean playOnKeyboard = true;
     public boolean playOnMouse = true;
@@ -43,6 +62,7 @@ public class KSEConfig {
         try {
             Files.createDirectories(CONFIG_DIR);
             Files.createDirectories(SOUNDS_DIR);
+            Files.createDirectories(IMPORT_DIR);
         } catch (IOException ignored) {
             // Non-fatal, saving will simply fail later.
         }

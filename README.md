@@ -3,7 +3,7 @@
 A client-side Fabric mod that plays a sound on every key press and mouse click.
 Settings open with **B** (or from Mod Menu).
 
-Current version: **1.0.1** · Author: **Mr_Lan123** · License: MIT
+Current version: **1.1.1** · Author: **Mr_Lan123** · License: MIT
 
 ## Features
 
@@ -37,7 +37,7 @@ cd KSE-Mod-1.21.1-1.21.4
 ./gradlew build        # Windows: gradlew.bat build
 ```
 
-The mod jar is `build/libs/kse-keyboard-sound-effects-1.0.1.jar`
+The mod jar is `build/libs/kse-<project>-1.1.1.jar`
 (ignore the `-sources.jar`). Use the JDK listed in the table.
 
 ## Built-in sounds

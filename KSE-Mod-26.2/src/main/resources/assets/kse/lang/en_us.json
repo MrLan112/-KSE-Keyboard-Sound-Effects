@@ -26,7 +26,7 @@
   "kse.config.key_editor": "Key editor",
   "kse.config.no_sound_hint": "No sound selected yet - pick one below",
   "kse.config.add_sound.path": "Path to the sound file",
-  "kse.config.add_sound.error_file": "File not found",
+  "kse.config.add_sound.error_file": "File not found. Type the full path, or put the file into config/kse/import and type only its name",
   "kse.keys.title": "Key editor",
   "kse.keys.add": "Add key",
   "kse.keys.remove": "Remove",

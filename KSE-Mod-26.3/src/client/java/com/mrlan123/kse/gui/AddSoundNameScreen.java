@@ -72,11 +72,7 @@ public class AddSoundNameScreen extends Screen {
             if (raw.length() > 1 && raw.startsWith("\"") && raw.endsWith("\"")) {
                 raw = raw.substring(1, raw.length() - 1);
             }
-            try {
-                file = Path.of(raw);
-            } catch (RuntimeException e) {
-                file = null;
-            }
+            file = KSEConfig.resolveImportFile(raw);
             if (file == null || !Files.isRegularFile(file)) {
                 errorMessage = Component.translatable("kse.config.add_sound.error_file");
                 return;

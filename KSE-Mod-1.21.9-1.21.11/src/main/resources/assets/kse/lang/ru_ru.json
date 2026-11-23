@@ -26,7 +26,7 @@
   "kse.config.key_editor": "Редактор кнопок",
   "kse.config.no_sound_hint": "Звук не выбран - выберите его ниже",
   "kse.config.add_sound.path": "Путь к файлу звука",
-  "kse.config.add_sound.error_file": "Файл не найден",
+  "kse.config.add_sound.error_file": "Файл не найден. Введите полный путь или положите файл в config/kse/import и введите только имя",
   "kse.keys.title": "Редактор кнопок",
   "kse.keys.add": "Добавить кнопку",
   "kse.keys.remove": "Удалить",

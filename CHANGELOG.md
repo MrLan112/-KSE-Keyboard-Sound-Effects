@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Works on Android launchers (PojavLauncher, Zalith, FCL and similar): sound goes through OpenAL
+- No file dialog on Android: type the file name, or drop sounds into `config/kse/import`
+- Custom sound formats: the new decoder is now in every version
+
 ## 1.0.1
 
 - Mod Menu support: open the settings with the config button
